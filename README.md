@@ -12,7 +12,7 @@
 
 RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的幻觉问题。
 
-[RAG简介，构建基础RAG](https://github.com)
+[RAG简介，构建基础RAG](https://github.com/yuimhosin/RAG/blob/main/RAG%E7%AE%80%E4%BB%8B)
 ## 第一部分：RAG知识库构建的文档整理与规范
 
 ## 任务1：纯文本文档的RAG适配指南
