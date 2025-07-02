@@ -75,7 +75,10 @@ Pinecone、Weaviate：一些云服务也提供向量数据库服务，适合大�
 ```python
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.docstore.document import Document
-
+# 设置 OpenAI API Key
+os.environ["OPENAI_BASE_URL"] = "url"
+os.environ["OPENAI_API_KEY"] = "api_key"
+import openai
 # 1. 加载文本
 with open("mydata.txt", "r", encoding="utf-8") as f:
     text = f.read()
