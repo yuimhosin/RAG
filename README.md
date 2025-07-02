@@ -29,7 +29,7 @@ RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的�
 #### 数据清洗
 需要以一定的规范，对数据进行清洗；同时，区分正样本和负样本，以提高回答的准确性。
 
-[数据清洗规范](https://github.com)
+[数据清洗规范](https://github.com/yuimhosin/RAG/blob/main/rag_data_cleaning.md)
 
 ### 1.2 文本分块（Chunking）方法对比
 
