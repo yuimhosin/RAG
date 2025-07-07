@@ -33,7 +33,7 @@ RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的�
 
 ### 1.2 文本分块（Chunking）方法对比
 
-[文本分块介绍及使用](https://github.com)
+[文本分块介绍及使用](https://github.com/yuimhosin/RAG/blob/main/text_chunking_vector_db_guide.md)
 #### 分块策略技术对比
 
 | 分块方法 | 优势 | 劣势 | 适用场景 | 推荐参数 |
@@ -57,7 +57,7 @@ RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的�
 ### 1.3 向量化与检索方案架构
 
 #### 1.3.1 嵌入模型（Embedding Model）选型指南
-[嵌入模型介绍及应用](https://github.com)
+[嵌入模型介绍及应用](https://github.com/yuimhosin/RAG/blob/main/embedding_models_guide.md)
 
 **中文优化模型推荐**
 | 模型名称 | 维度 | 性能 | 部署复杂度 | 适用场景 |
