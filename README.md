@@ -161,11 +161,11 @@ RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的�
 
 
 ### 2.2 表格数据处理与向量化
-[表格的RAG构建](https://github.com)
+[表格的RAG构建](https://github.com/yuimhosin/RAG/blob/main/table_rag_guide.md)
 
-[表格结构化转换策略](https://github.com)
+[表格结构化转换策略](https://github.com/yuimhosin/RAG/blob/main/table_structuring_strategies.markdown)
 
-[表格检索优化方案](https://github.com)
+[表格检索优化方案](https://github.com/yuimhosin/RAG/blob/main/table_retrieval_optimization.markdown)
 
 
 
