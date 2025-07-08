@@ -96,7 +96,7 @@ RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的�
 
 
 ### 1.4 常见问题与解决方案整理
-[问题解决](https://github.com)
+[问题解决](https://github.com/yuimhosin/RAG/blob/main/rag_retrieval_problems_solutions.md)
 #### 问题诊断决策树
 
 ```
