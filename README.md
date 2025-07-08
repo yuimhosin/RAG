@@ -145,7 +145,7 @@ RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的�
 ## 任务2：PDF/表格/多模态文档的专项整理
 
 ### 2.1 PDF文档处理技术方案
-[PDF文档的RAG构建](https://github.com)
+[PDF文档的RAG构建](https://github.com/yuimhosin/RAG/edit/main/pdf_rag_system_guide.md)
 #### PDF解析工具技术对比
 
 | 工具 | 文本提取 | 公式支持 | 表格处理 | 图片识别 | 适用场景 |
