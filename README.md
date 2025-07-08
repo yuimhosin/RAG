@@ -170,7 +170,7 @@ RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的�
 
 
 ### 2.3 多模态（图片+文本）处理方案
-[多模态文档的RAG构建](https://github.com)
+[多模态文档的RAG构建](https://github.com/yuimhosin/RAG/blob/main/multimodal_rag_strategies.markdown)
 
 #### 图片信息提取技术栈
 
