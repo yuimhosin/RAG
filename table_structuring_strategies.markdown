@@ -158,52 +158,79 @@ This code uses a BERT-based NER model to identify entities in table headers (e.g
 - **层次图模型**：表头-数据的层次关系建模
 - **知识图谱集成**：将表格融入更大的知识图谱
 
-**Example: Building a Graph Representation of Table Relationships**
-
-Below is a Python example using `networkx` to create a graph representation of a table, modeling cells as nodes and their relationships as edges.
-
 ```python
-import networkx as nx
-
-def build_table_graph(table):
-    G = nx.DiGraph()
+class AdvancedTableVectorizer:
+    """高级表格向量化器"""
     
-    # Assume table is a list of lists (rows), first row is headers
-    headers = table[0]
-    data_rows = table[1:]
+    def __init__(self, embedding_model_name: str = "microsoft/tapex-base"):
+        self.tokenizer = AutoTokenizer.from_pretrained(embedding_model_name)
+        self.model = AutoModel.from_pretrained(embedding_model_name)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model.to(self.device)
     
-    # Add header nodes
-    for col_idx, header in enumerate(headers):
-        G.add_node(f"header_{col_idx}", text=header, type="header")
+    def create_multi_granularity_embeddings(self, table_df: pd.DataFrame) -> Dict[str, np.ndarray]:
+        """创建多粒度嵌入"""
+        embeddings = {}
+        
+        # 表格级嵌入
+        embeddings['table'] = self.create_table_embedding(table_df)
+        
+        # 列级嵌入
+        embeddings['columns'] = self.create_column_embeddings(table_df)
+        
+        # 行级嵌入
+        embeddings['rows'] = self.create_row_embeddings(table_df)
+        
+        # 单元格级嵌入
+        embeddings['cells'] = self.create_cell_embeddings(table_df)
+        
+        # 结构特征嵌入
+        embeddings['structure'] = self.create_structure_embedding(table_df)
+        
+        return embeddings
     
-    # Add data cell nodes and edges
-    for row_idx, row in enumerate(data_rows):
-        for col_idx, cell in enumerate(row):
-            cell_id = f"cell_{row_idx}_{col_idx}"
-            G.add_node(cell_id, text=cell, type="data")
-            # Connect cell to its header
-            G.add_edge(cell_id, f"header_{col_idx}", relation="belongs_to")
-            # Connect cells in the same row
-            if col_idx > 0:
-                G.add_edge(cell_id, f"cell_{row_idx}_{col_idx-1}", relation="row_adjacent")
+    def create_table_embedding(self, df: pd.DataFrame) -> np.ndarray:
+        """创建表格级嵌入"""
+        # 表格摘要
+        table_summary = f"""
+        Table with {len(df)} rows and {len(df.columns)} columns.
+        Columns: {', '.join(df.columns.astype(str))}
+        Data types: {dict(df.dtypes.value_counts())}
+        Sample: {df.head(2).to_string()}
+        """
+        
+        return self.encode_text(table_summary)
     
-    return G
-
-# Example usage
-table = [
-    ["Company", "Market Cap", "Year"],
-    ["Apple", "2.5T", "1976"],
-    ["Microsoft", "2.3T", "1975"]
-]
-graph = build_table_graph(table)
-
-# Print graph info
-print("Nodes:", graph.nodes(data=True))
-print("Edges:", graph.edges(data=True))
+    def create_column_embeddings(self, df: pd.DataFrame) -> Dict[str, np.ndarray]:
+        """创建列级嵌入"""
+        column_embeddings = {}
+        
+        for col in df.columns:
+            # 列描述包含列名、统计信息、样本值
+            col_description = f"""
+            Column: {col}
+            Type: {str(df[col].dtype)}
+            Unique values: {df[col].nunique()}
+            Null percentage: {df[col].isnull().sum() / len(df) * 100:.2f}%
+            Sample values: {', '.join(df[col].astype(str).dropna().head(3).tolist())}
+            """
+            
+            column_embeddings[col] = self.encode_text(col_description)
+        
+        return column_embeddings
+    
+    def encode_text(self, text: str) -> np.ndarray:
+        """文本编码"""
+        inputs = self.tokenizer(text, return_tensors="pt", max_length=512, truncation=True)
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
+        
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+            # 使用[CLS]标记的嵌入
+            embedding = outputs.last_hidden_state[:, 0, :].squeeze().cpu().numpy()
+        
+        return embedding
 ```
-
-This code creates a directed graph where nodes represent headers and cells, and edges capture relationships like a cell belonging to a header or adjacency within a row. This aligns with the graph structure representation described, enabling relational queries and knowledge graph integration.
-
 #### 4.2 向量化表示
 
 #### 单元格级向量化
@@ -236,7 +263,48 @@ This code creates a directed graph where nodes represent headers and cells, and 
 - **版面分析**：文档中表格与其他元素的关系
 - **上下文融合**：表格与周围文本的语义关联
 - **引用关系**：文本中对表格的引用识别
-
+```python
+class CrossModalTableProcessor:
+    """跨模态表格处理器"""
+    
+    def __init__(self):
+        self.text_processor = TextTableProcessor()
+        self.visual_processor = VisualTableProcessor()
+        self.fusion_engine = ModalFusionEngine()
+    
+    def process_multimodal_document(self, document_path: str, 
+                                  text_content: str = None) -> Dict:
+        """处理多模态文档"""
+        
+        # 1. 视觉处理
+        visual_tables = self.visual_processor.extract_tables_from_document(document_path)
+        
+        # 2. 文本处理
+        text_tables = self.text_processor.extract_tables_from_text(text_content)
+        
+        # 3. 模态融合
+        fused_results = self.fusion_engine.fuse_modalities(visual_tables, text_tables)
+        
+        # 4. 质量增强
+        enhanced_results = self.enhance_with_context(fused_results)
+        
+        return enhanced_results
+    
+    def enhance_with_context(self, tables: List[Dict]) -> List[Dict]:
+        """使用上下文增强"""
+        enhanced_tables = []
+        
+        for table in tables:
+            context = self.extract_context_around_table(table)
+            enhanced_table = {
+                **table,
+                'context': context,
+                'semantic_enrichment': self.semantically_enrich_table(table, context)
+            }
+            enhanced_tables.append(enhanced_table)
+        
+        return enhanced_tables
+```
 ## 6. 表格转换质量评估
 
 ### 6.1 结构准确性评估
@@ -262,7 +330,80 @@ This code creates a directed graph where nodes represent headers and cells, and 
 - **问答准确率**：基于转换结果的问答性能
 - **检索相关性**：转换质量对检索效果的影响
 - **知识图谱质量**：转换后知识图谱的完整性
-
+```python
+class ComprehensiveQualityEvaluator:
+    """全面质量评估器"""
+    
+    def __init__(self):
+        self.evaluation_pipeline = [
+            self.evaluate_structural_accuracy,
+            self.evaluate_semantic_accuracy,
+            self.evaluate_functional_correctness,
+            self.evaluate_user_satisfaction
+        ]
+    
+    def comprehensive_evaluation(self, original_table: Dict, 
+                               converted_table: Dict, 
+                               expected_output: Dict = None) -> Dict:
+        """全面质量评估"""
+        
+        evaluation_results = {
+            'overall_score': 0.0,
+            'detailed_scores': {},
+            'critical_issues': [],
+            'improvement_suggestions': [],
+            'confidence_intervals': {}
+        }
+        
+        total_weight = 0
+        weighted_score = 0
+        
+        for eval_func in self.evaluation_pipeline:
+            score, issues, confidence = eval_func(original_table, converted_table, expected_output)
+            
+            metric_name = eval_func.__name__
+            weight = self.get_metric_weight(metric_name)
+            
+            evaluation_results['detailed_scores'][metric_name] = {
+                'score': score,
+                'weight': weight,
+                'issues': issues,
+                'confidence': confidence
+            }
+            
+            weighted_score += score * weight
+            total_weight += weight
+            evaluation_results['critical_issues'].extend(issues)
+        
+        evaluation_results['overall_score'] = weighted_score / total_weight
+        evaluation_results['improvement_suggestions'] = self.generate_improvement_plan(
+            evaluation_results['detailed_scores']
+        )
+        
+        return evaluation_results
+    
+    def evaluate_structural_accuracy(self, original: Dict, converted: Dict, expected: Dict) -> Tuple[float, List, float]:
+        """评估结构准确性"""
+        issues = []
+        
+        # 行列数匹配
+        original_shape = original.get('shape', (0, 0))
+        converted_shape = converted.get('shape', (0, 0))
+        
+        row_match = abs(original_shape[0] - converted_shape[0]) / max(original_shape[0], 1)
+        col_match = abs(original_shape[1] - converted_shape[1]) / max(original_shape[1], 1)
+        
+        structure_score = 1 - (row_match + col_match) / 2
+        
+        if row_match > 0.1:
+            issues.append({
+                'type': 'row_count_mismatch',
+                'severity': 'high',
+                'details': f"Row count mismatch: {original_shape[0]} vs {converted_shape[0]}"
+            })
+        
+        return structure_score, issues, 0.95
+```
 ## 7. 实施建议与最佳实践
 
 ### 7.1 技术选型建议
@@ -277,29 +418,7 @@ This code creates a directed graph where nodes represent headers and cells, and 
 - **云服务**：AWS Textract、Google Document AI
 - **深度学习框架**：PaddlePaddle-TableMaster、Microsoft Table Transformer
 
-### 7.2 系统设计原则
 
-#### 可扩展性设计
-- **模块化架构**：解析、理解、表示各模块独立
-- **插件式扩展**：支持新的解析算法快速集成
-- **配置驱动**：通过配置文件适应不同场景需求
-
-#### 性能优化策略
-- **并行处理**：多表格并行解析，提高处理效率
-- **缓存机制**：相似表格结构的复用
-- **增量更新**：支持表格内容的增量更新
-
-### 7.3 数据管理策略
-
-#### 版本控制
-- **表格版本管理**：跟踪表格结构和内容的变化
-- **转换历史记录**：保存转换过程的中间结果
-- **回滚机制**：支持转换错误时的快速恢复
-
-#### 质量监控
-- **实时监控**：转换过程中的质量指标监控
-- **异常报警**：转换失败或质量下降的及时通知
-- **质量报告**：定期生成转换质量分析报告
 
 ## 结论
 
