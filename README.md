@@ -93,8 +93,10 @@ RAG包含摄取、检索、增强、生成四个步骤，能有效解决LLM的�
 | **稀疏检索(BM25)** | 0.71 | 0.79 | 25 | 低 | 简单 |
 | **混合检索(加权融合)** | 0.83 | 0.89 | 65 | 高 | 复杂 |
 | **重排序(Cross-encoder)** | 0.86 | 0.91 | 120 | 高 | 复杂 |
-
-
+#### 1.3.4 重排序（Reranking）
+[重排序系统介绍](https://github.com/yuimhosin/RAG/blob/main/RAG_Reranking_System_Technical_Documentation.md)
+#### 1.3.5 RAG系统的评估
+[评估RAG](https://github.com/yuimhosin/RAG/blob/main/RAG_Evaluation_System_Technical_Documentation.md)
 ### 1.4 常见问题与解决方案整理
 [问题解决](https://github.com/yuimhosin/RAG/blob/main/rag_retrieval_problems_solutions.md)
 #### 问题诊断决策树
