@@ -329,44 +329,6 @@ pipeline = [
 ]
 ```
 
-### 2. 性能优化技巧
-
-**预编译正则表达式：**
-```python
-class RAGDataCleaner:
-    def __init__(self):
-        # 预编译提高性能
-        self.url_pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+])+')
-        self.email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
-```
-
-**批量处理：**
-```python
-def batch_clean(self, texts, batch_size=1000):
-    """批量处理大规模数据"""
-    for i in range(0, len(texts), batch_size):
-        batch = texts[i:i+batch_size]
-        yield [self.clean_single_text(text) for text in batch]
-```
-
-### 3. 质量监控
-
-```python
-def setup_quality_monitoring():
-    """建立数据质量监控"""
-    logging.basicConfig(level=logging.INFO)
-    
-    # 记录关键指标
-    quality_metrics = {
-        'processing_time': time.time(),
-        'input_count': 0,
-        'output_count': 0,
-        'rejection_rate': 0,
-        'average_length': 0
-    }
-    
-    return quality_metrics
-```
 
 ## 核心架构
 
